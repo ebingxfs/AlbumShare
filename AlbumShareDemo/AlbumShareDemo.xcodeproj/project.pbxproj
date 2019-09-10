@@ -44,6 +44,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		C4026BC02327924100E5DD34 /* AlbumShareDemo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = AlbumShareDemo.entitlements; sourceTree = "<group>"; };
 		C4B3C2952317E7DC0006BE28 /* AlbumShareDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AlbumShareDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C4B3C2982317E7DC0006BE28 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		C4B3C2992317E7DC0006BE28 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -103,6 +104,7 @@
 		C4B3C2972317E7DC0006BE28 /* AlbumShareDemo */ = {
 			isa = PBXGroup;
 			children = (
+				C4026BC02327924100E5DD34 /* AlbumShareDemo.entitlements */,
 				C4B3C2982317E7DC0006BE28 /* AppDelegate.h */,
 				C4B3C2992317E7DC0006BE28 /* AppDelegate.m */,
 				C4B3C29B2317E7DC0006BE28 /* ViewController.h */,
@@ -180,9 +182,19 @@
 				TargetAttributes = {
 					C4B3C2942317E7DC0006BE28 = {
 						CreatedOnToolsVersion = 10.1;
+						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
+								enabled = 1;
+							};
+						};
 					};
 					C4FC72652318F1190093FB5A = {
 						CreatedOnToolsVersion = 10.1;
+						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -400,14 +412,16 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = AlbumShareDemo/AlbumShareDemo.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = RA3S34K4EA;
+				DEVELOPMENT_TEAM = LV3QL6W3CH;
 				INFOPLIST_FILE = AlbumShareDemo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.dachen.kuwoyingyue2.AlbumShareDemo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.AlbumShareDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -417,14 +431,16 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = AlbumShareDemo/AlbumShareDemo.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = RA3S34K4EA;
+				DEVELOPMENT_TEAM = LV3QL6W3CH;
 				INFOPLIST_FILE = AlbumShareDemo/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.dachen.kuwoyingyue2.AlbumShareDemo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.AlbumShareDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -433,15 +449,18 @@
 		C4FC72722318F1190093FB5A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
+				CODE_SIGN_ENTITLEMENTS = ShareExtention/ShareExtention.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = LV3QL6W3CH;
 				INFOPLIST_FILE = ShareExtention/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.dachen.kuwoyingyue2.AlbumShareDemo.ShareExtention;
+				PRODUCT_BUNDLE_IDENTIFIER = com.AlbumShareDemo.ShareExtention;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -452,15 +471,18 @@
 		C4FC72732318F1190093FB5A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = "";
+				CODE_SIGN_ENTITLEMENTS = ShareExtention/ShareExtention.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = LV3QL6W3CH;
 				INFOPLIST_FILE = ShareExtention/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.dachen.kuwoyingyue2.AlbumShareDemo.ShareExtention;
+				PRODUCT_BUNDLE_IDENTIFIER = com.AlbumShareDemo.ShareExtention;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;

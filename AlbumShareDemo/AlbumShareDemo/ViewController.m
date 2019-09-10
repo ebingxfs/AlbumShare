@@ -33,7 +33,7 @@
 //    if (success) {
 //        DCLog(@"删除共享文件");
 //    }
-    
+    [self showError];
     
     PHFetchResult *userAlbums = [PHAssetCollection fetchAssetCollectionsWithType:PHAssetCollectionTypeSmartAlbum subtype:PHAssetCollectionSubtypeSmartAlbumUserLibrary options:nil];
     
@@ -255,5 +255,14 @@
     return _storagePath;
 }
 
+
+-(void)showError
+{
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:nil message:@"分享失败" preferredStyle:UIAlertControllerStyleActionSheet];
+    [alert addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+        
+    }]];
+    [self presentViewController:alert animated:YES completion:NULL];
+}
 
 @end

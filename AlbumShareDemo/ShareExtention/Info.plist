@@ -26,6 +26,8 @@
 		<dict>
 			<key>NSExtensionActivationRule</key>
 			<dict>
+				<key>NSExtensionActivationSupportsFileWithMaxCount</key>
+				<string>1</string>
 				<key>NSExtensionActivationSupportsImageWithMaxCount</key>
 				<string>9</string>
 				<key>NSExtensionActivationSupportsMovieWithMaxCount</key>

@@ -42,12 +42,14 @@
             NSArray *imagesDataArray = [userDefaults valueForKey:@"shareImageDataArray"];
             
             NSMutableDictionary *dic = [[imagesDataArray firstObject] mutableCopy];
-            NSString *fileUrl = dic[@"videoURL"];
+            NSString *fileUrl = dic[@"fileUrl"];
             
             if (fileUrl) {
-                NSData *data = [NSData dataWithContentsOfURL:[NSURL URLWithString:fileUrl]];
+                NSError *error;
+                //其中NSDataReadingOptions可以附加一个参数NSDataReadingMappedIfSafe参数。使用这个参数后，iOS就不会把整个文件全部读取的内存了，而是将文件映射到进程的地址空间中，这么做并不会占用实际内存。这样就可以解决内存满的问题 https://www.jianshu.com/p/da10690811e5
+                NSData *data = [NSData dataWithContentsOfFile:fileUrl options:NSDataReadingMappedIfSafe error:&error];
                 
-                
+                NSLog(@"%@",@(data.length));
             } else {
                 shareDataArray = imagesDataArray;
             }

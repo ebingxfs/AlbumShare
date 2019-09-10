@@ -48,13 +48,11 @@
     
     self.imageDataArray = [NSMutableArray array];
     
-    
     //扩展中的处理不能太长时间阻塞主线程,放入线程中处处理，否则可能导致苹果拒绝你的应用
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         
         //extensionContext表示一个扩展到host app的连接，通过extionContext,你可以访问一个NSExtensionItem的数组，每一个NSExtensionItem项表示从host app传回的一个逻辑单元。
         for (NSExtensionItem *item in self.extensionContext.inputItems) {
-            
             
             NSInteger count = item.attachments.count;
             
@@ -65,59 +63,126 @@
                 
                 if ([itemProvider hasItemConformingToTypeIdentifier:@"public.image"]) {
                     
+                    [self imageHandle:itemProvider count:count];
                     
-                    //item Url类型：file:///var/mobile/Media/PhotoData/OutgoingTemp/0F2F2637-0DBF-44F2-8F89-EFD9579BB76E/RenderedPhoto/IMG_0185.JPG
-                    
-                    [itemProvider loadItemForTypeIdentifier:[itemProvider.registeredTypeIdentifiers firstObject] options:nil completionHandler:^(id<NSSecureCoding>  _Nullable item, NSError * _Null_unspecified error) {
-                        
-                        // 对itemProvider夹带着的图片进行解析
-                        NSURL *imageUrl = (NSURL *)item;
-                        
-                        if (imageUrl) {
-                            NSMutableDictionary *dataDic = [NSMutableDictionary dictionary];
-                            [dataDic setObject:[NSString stringWithFormat:@"%@",imageUrl] forKey:@"imageUrl"];
-                            NSData *data = [NSData dataWithContentsOfURL:imageUrl];
-                            [dataDic setObject:data forKey:@"data"];
-                            [self.imageDataArray addObject:dataDic];
-                        }
-                        
-                        dispatch_async(dispatch_get_main_queue(), ^{
-                            
-                            if (self.imageDataArray.count == count) {
-                                
-                                //NSLog(@"%@", [NSString stringWithFormat:@"获取全部%ld张照片",(long)count]);
-                                //name同App groups匹配
-                                NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
-                                NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:[NSString stringWithFormat:@"group.%@",bundleIdentifier]];
-                                
-                                //存图片数组
-                                [userDefaults setObject:self.imageDataArray forKey:@"shareImageDataArray"];
-                                //用于标记是新的分享
-                                [userDefaults setBool:YES forKey:@"newShare"];
-                                
-                                [activityIndicatorView stopAnimating];
-                                //获取全部再销毁
-                                [self.extensionContext completeRequestReturningItems:@[] completionHandler:nil];
-                                
-                                NSURL *destinationURL = [NSURL URLWithString:[NSString stringWithFormat:@"dachenmedicalcircle://%@",@"saveFilePath"]];
-                                NSString *className = [[NSString alloc] initWithData:[NSData dataWithBytes:(unsigned char []){0x55, 0x49, 0x41, 0x70, 0x70, 0x6C, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6F, 0x6E} length:13] encoding:NSASCIIStringEncoding];
-                                if (NSClassFromString(className)) {
-                                    id object = [NSClassFromString(className) performSelector:@selector(sharedApplication)];
-                                    [object performSelector:@selector(openURL:) withObject:destinationURL];
-                                }
-                            } else {
-                                [activityIndicatorView stopAnimating];
-                            }
-                        });
-                        
-                    }];
-                }else {
+                } else if ([itemProvider hasItemConformingToTypeIdentifier:@"public.movie"]) {
                     
                     [self videoHandle:itemProvider];
+                    
+                } else {
+                    
+                    [self fileHandle:itemProvider];
                 }
             }
         }
     });
+}
+
+-(void)imageHandle:(NSItemProvider *)itemProvider count:(NSInteger)count
+{
+    
+    //item Url类型：file:///var/mobile/Media/PhotoData/OutgoingTemp/0F2F2637-0DBF-44F2-8F89-EFD9579BB76E/RenderedPhoto/IMG_0185.JPG
+    
+    [itemProvider loadItemForTypeIdentifier:[itemProvider.registeredTypeIdentifiers firstObject] options:nil completionHandler:^(id<NSSecureCoding>  _Nullable item, NSError * _Null_unspecified error) {
+        
+        // 对itemProvider夹带着的图片进行解析
+        NSURL *imageUrl = (NSURL *)item;
+        
+        if (imageUrl) {
+            NSMutableDictionary *dataDic = [NSMutableDictionary dictionary];
+            [dataDic setObject:[NSString stringWithFormat:@"%@",imageUrl] forKey:@"imageUrl"];
+            NSData *data = [NSData dataWithContentsOfURL:imageUrl];
+            [dataDic setObject:data forKey:@"data"];
+            [self.imageDataArray addObject:dataDic];
+        }
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            if (self.imageDataArray.count == count) {
+                
+                //NSLog(@"%@", [NSString stringWithFormat:@"获取全部%ld张照片",(long)count]);
+                //name同App groups匹配
+                NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
+                NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:[NSString stringWithFormat:@"group.%@",bundleIdentifier]];
+                
+                //存图片数组
+                [userDefaults setObject:self.imageDataArray forKey:@"shareImageDataArray"];
+                //用于标记是新的分享
+                [userDefaults setBool:YES forKey:@"newShare"];
+                
+                [self.activityIndicatorView stopAnimating];
+                //获取全部再销毁
+                [self.extensionContext completeRequestReturningItems:@[] completionHandler:nil];
+                
+                NSURL *destinationURL = [NSURL URLWithString:[NSString stringWithFormat:@"AlbumShareDemo://%@",@"saveFilePath"]];
+                NSString *className = [[NSString alloc] initWithData:[NSData dataWithBytes:(unsigned char []){0x55, 0x49, 0x41, 0x70, 0x70, 0x6C, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6F, 0x6E} length:13] encoding:NSASCIIStringEncoding];
+                if (NSClassFromString(className)) {
+                    id object = [NSClassFromString(className) performSelector:@selector(sharedApplication)];
+                    [object performSelector:@selector(openURL:) withObject:destinationURL];
+                }
+            } else {
+                [self.activityIndicatorView stopAnimating];
+            }
+        });
+        
+    }];
+}
+
+-(void)fileHandle:(NSItemProvider *)itemProvider
+{
+    [itemProvider loadItemForTypeIdentifier:[itemProvider.registeredTypeIdentifiers firstObject] options:nil completionHandler:^(id<NSSecureCoding>  _Nullable item, NSError * _Null_unspecified error) {
+        
+        // 对itemProvider夹带着的文件进行解析
+        NSURL *imageUrl = (NSURL *)item;
+        NSString *name = [imageUrl lastPathComponent];
+        NSString *outputfile = [NSString stringWithFormat:@"%@/%@",self.storagePath,name];
+        
+        if (imageUrl) {
+            @autoreleasepool {
+                NSMutableDictionary *dataDic = [NSMutableDictionary dictionary];
+                [dataDic setObject:[NSString stringWithFormat:@"%@",imageUrl] forKey:@"imageUrl"];
+                NSError *errorPtr;
+                NSData *data = [NSData dataWithContentsOfURL:imageUrl options:NSDataReadingMappedIfSafe error:&errorPtr];
+                
+                BOOL isWrite = [data writeToFile:outputfile atomically:YES];
+                if (isWrite) {
+                    //NSLog(@"写入成功");
+                    [dataDic setObject:outputfile forKey:@"fileUrl"];
+                    [self.imageDataArray addObject:dataDic];
+                }
+            }
+        }
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            
+            if (self.imageDataArray.count >0) {
+                
+                //NSLog(@"%@", [NSString stringWithFormat:@"获取全部%ld张照片",(long)count]);
+                //name同App groups匹配
+                NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
+                NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:[NSString stringWithFormat:@"group.%@",bundleIdentifier]];
+                
+                //存图片数组
+                [userDefaults setObject:self.imageDataArray forKey:@"shareImageDataArray"];
+                //用于标记是新的分享
+                [userDefaults setBool:YES forKey:@"newShare"];
+                
+                [self.activityIndicatorView stopAnimating];
+                //获取全部再销毁
+                [self.extensionContext completeRequestReturningItems:@[] completionHandler:nil];
+                
+                NSURL *destinationURL = [NSURL URLWithString:[NSString stringWithFormat:@"AlbumShareDemo://%@",@"saveFilePath"]];
+                NSString *className = [[NSString alloc] initWithData:[NSData dataWithBytes:(unsigned char []){0x55, 0x49, 0x41, 0x70, 0x70, 0x6C, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6F, 0x6E} length:13] encoding:NSASCIIStringEncoding];
+                if (NSClassFromString(className)) {
+                    id object = [NSClassFromString(className) performSelector:@selector(sharedApplication)];
+                    [object performSelector:@selector(openURL:) withObject:destinationURL];
+                }
+            } else {
+                [self.activityIndicatorView stopAnimating];
+            }
+        });
+        
+    }];
 }
 
 -(void)videoHandle:(NSItemProvider *)itemProvider
@@ -128,7 +193,7 @@
         // 对itemProvider夹带着的图片进行解析
         NSURL *videoUrl = (NSURL *)item;
         
-        NSString *videoName = [videoUrl lastPathComponent];
+//        NSString *videoName = [videoUrl lastPathComponent];
         
         NSString *bundleIdentifier = [[NSBundle mainBundle] bundleIdentifier];
         NSUserDefaults *userDefaults = [[NSUserDefaults alloc] initWithSuiteName:[NSString stringWithFormat:@"group.%@",bundleIdentifier]];
@@ -182,7 +247,7 @@
                      //获取全部再销毁
                      [self.extensionContext completeRequestReturningItems:@[] completionHandler:nil];
                      
-                     NSURL *destinationURL = [NSURL URLWithString:[NSString stringWithFormat:@"dachenmedicalcircle://%@",@"saveFilePath"]];
+                     NSURL *destinationURL = [NSURL URLWithString:[NSString stringWithFormat:@"AlbumShareDemo://%@",@"saveFilePath"]];
                      NSString *className = [[NSString alloc] initWithData:[NSData dataWithBytes:(unsigned char []){0x55, 0x49, 0x41, 0x70, 0x70, 0x6C, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6F, 0x6E} length:13] encoding:NSASCIIStringEncoding];
                      if (NSClassFromString(className)) {
                          id object = [NSClassFromString(className) performSelector:@selector(sharedApplication)];
@@ -268,6 +333,27 @@
         [fileManager createDirectoryAtPath:_storagePath withIntermediateDirectories:NO attributes:nil error:nil];
     }
     return _storagePath;
+}
+
+
+//文件放在document下面无法共享
+- (NSString *)documentPath
+{
+    NSString *path;
+    NSString *documentPath = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
+    path = [documentPath stringByAppendingPathComponent:APP_FOLDER_NAME];
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    
+    NSError *error;
+    BOOL success = [fileManager removeItemAtPath:path error:&error];
+    if (success) {
+        NSLog(@"删除共享文件夹");
+    }
+    
+    if (![fileManager fileExistsAtPath:path]) {
+        [fileManager createDirectoryAtPath:path withIntermediateDirectories:NO attributes:nil error:nil];
+    }
+    return path;
 }
 
 @end
