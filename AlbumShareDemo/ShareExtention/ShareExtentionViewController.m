@@ -47,7 +47,11 @@
     [activityIndicatorView startAnimating];
     
     self.imageDataArray = [NSMutableArray array];
-    
+}
+
+-(void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
     //扩展中的处理不能太长时间阻塞主线程,放入线程中处处理，否则可能导致苹果拒绝你的应用
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         
